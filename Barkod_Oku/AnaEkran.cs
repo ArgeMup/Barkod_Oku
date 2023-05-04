@@ -9,19 +9,69 @@ namespace Barkod_Oku
 {
     public partial class AnaEkran : Form
     {
+        bool İlkAçılışİşlemleriTamamlandı = false;
         public AnaEkran()
         {
             InitializeComponent();
 
-            Text = "ArGeMuP " + Kendi.Adı + " " + Kendi.Sürüm;
+            if (Ortak.Depo_Komut["Komut", 0] == "Çalıştır")
+            {
+                P_Sol_Sağ.Panel1Collapsed = true;
+            }
+            else //Ayarla
+            {
+                İpUcu.SetToolTip(Girdi, "Bir barkodu okutabilmek için" + Environment.NewLine +
+                    "Barkodu kameranın önüne gelecek şekilde tutabilirsiniz veya" + Environment.NewLine +
+                    "Önceden resmi çekilmiş bir barkodun resmini sürükle bırak yapabilirsiniz.");
 
-            KarakterKodlama.SelectedIndex = 0;
-            Tür.Items.Add("Tümünü Dahil Et");
-            Tür.Items.AddRange(string.Join("?", Enum.GetNames(typeof(BarcodeFormat))).Split('?')); Tür.SetItemChecked(Tür.Items.IndexOf(BarcodeFormat.QR_CODE.ToString()), true);
+                KarakterKodlama.SelectedIndex = 0;
+                Tür.Items.AddRange(string.Join("?", Enum.GetNames(typeof(BarcodeFormat))).Split('?'));
+
+                IDepo_Eleman Detaylar = Ortak.Depo_Ayarlar["Detaylar"];
+                KameraNumarası.Value = (decimal)Detaylar.Oku_TamSayı("Kamera Numarası");
+                KarakterKodlama.Text = Detaylar.Oku("Karakter Kodlama", "ASCII");
+                if (Detaylar["Tür", 0] == "Tümü") Tür.SetItemChecked(0, true);
+                else
+                {
+                    foreach (string t in Detaylar["Tür"].İçeriği)
+                    {
+                        int konum = Tür.Items.IndexOf(t);
+                        if (konum >= 0) Tür.SetItemChecked(konum, true);
+                    }
+
+                    if (Tür.CheckedItems.Count == 0) Tür.SetItemChecked(0, true);
+                }
+                AutoRotate.Checked = Detaylar.Oku_Bit("AutoRotate", false);
+                Multi.Checked = Detaylar.Oku_Bit("Multi", false);
+                TRY_HARDER.Checked = Detaylar.Oku_Bit("TRY_HARDER", false);
+                DumpBlackPoint.Checked = Detaylar.Oku_Bit("DumpBlackPoint", false);
+                PURE_BARCODE.Checked = Detaylar.Oku_Bit("PURE_BARCODE", false);
+                ASSUME_CODE_39_CHECK_DIGIT.Checked = Detaylar.Oku_Bit("ASSUME_CODE_39_CHECK_DIGIT", false);
+                ASSUME_MSI_CHECK_DIGIT.Checked = Detaylar.Oku_Bit("ASSUME_MSI_CHECK_DIGIT", false);
+                USE_CODE_39_EXTENDED_MODE.Checked = Detaylar.Oku_Bit("USE_CODE_39_EXTENDED_MODE", true);
+                RELAXED_CODE_39_EXTENDED_MODE.Checked = Detaylar.Oku_Bit("RELAXED_CODE_39_EXTENDED_MODE", true);
+                TRY_HARDER_WITHOUT_ROTATION.Checked = Detaylar.Oku_Bit("TRY_HARDER_WITHOUT_ROTATION", true);
+                ASSUME_GS1.Checked = Detaylar.Oku_Bit("ASSUME_GS1", false);
+                RETURN_CODABAR_START_END.Checked = Detaylar.Oku_Bit("RETURN_CODABAR_START_END", false);
+                ALSO_INVERTED.Checked = Detaylar.Oku_Bit("ALSO_INVERTED", false);
+
+                Ortak.Depo_Çalıştır = new Depo_();
+            }
+
+            Ortak.Barkod = new Barkod_();
+
+#if !DEBUG
+            TopMost = true;
+            WindowState = FormWindowState.Maximized;
+#endif
+
+            İlkAçılışİşlemleriTamamlandı = true;
         }
         private void AnaEkran_Shown(object sender, EventArgs e)
         {
             Ayar_Değişti(null, null);
+
+            Kaydet.Enabled = false;
         }
         private void AnaEkran_DragEnter(object sender, DragEventArgs e)
         {
@@ -44,51 +94,89 @@ namespace Barkod_Oku
                 }
             }
         }
-
+        private void AnaEkran_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            if (Kaydet.Enabled)
+            {
+                DialogResult dr = MessageBox.Show("Değişiklikleri kaydetmeden çıkmak istiyor musunuz?", Text, MessageBoxButtons.OKCancel, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button2);
+                if (dr == DialogResult.Cancel)
+                {
+                    e.Cancel = true;
+                }
+            }
+        }
+        private void Sığdır_CheckedChanged(object sender, EventArgs e)
+        {
+            Girdi.SizeMode = Sığdır.Checked ? PictureBoxSizeMode.Zoom : PictureBoxSizeMode.Normal;
+        }
         private void Ayar_Değişti(object sender, EventArgs e)
         {
-            Parametre_İzleme.Text = KarakterKodlama.Text + " ";
-            if (Tür.CheckedItems.Count > 0 && Tür.GetItemChecked(0)) Parametre_İzleme.Text += "TUMU ";
+            if (!İlkAçılışİşlemleriTamamlandı) return;
+
+            IDepo_Eleman Detaylar = Ortak.Depo_Ayarlar["Detaylar"];
+            Detaylar.Yaz("Kamera Numarası", (int)KameraNumarası.Value);
+            Detaylar.Yaz("Karakter Kodlama", KarakterKodlama.Text);
+            if (Tür.GetItemChecked(0)) Detaylar["Tür"].İçeriği = new string[] { "Tümü" };
             else
             {
+                string[] l = new string[Tür.CheckedItems.Count];
+
                 for (int i = 0; i < Tür.CheckedItems.Count; i++)
                 {
-                    Parametre_İzleme.Text += Tür.CheckedItems[i].ToString() + ",";
+                    l[i] = Tür.CheckedItems[i].ToString();
                 }
-                Parametre_İzleme.Text = Parametre_İzleme.Text.TrimEnd(',') + " ";
+
+                Detaylar["Tür"].İçeriği = l;
             }
-            Parametre_İzleme.Text +=
-                (AutoRotate.Checked ? "E " : "H ") +
-                (Multi.Checked ? "E " : "H ") +
-                (TRY_HARDER.Checked ? "E " : "H ") +
-                (DumpBlackPoint.Checked ? "E " : "H ") +
-                (PURE_BARCODE.Checked ? "E " : "H ") +
-                (ASSUME_CODE_39_CHECK_DIGIT.Checked ? "E " : "H ") +
-                (ASSUME_MSI_CHECK_DIGIT.Checked ? "E " : "H ") +
-                (USE_CODE_39_EXTENDED_MODE.Checked ? "E " : "H ") +
-                (RELAXED_CODE_39_EXTENDED_MODE.Checked ? "E " : "H ") +
-                (TRY_HARDER_WITHOUT_ROTATION.Checked ? "E " : "H ") +
-                (ASSUME_GS1.Checked ? "E " : "H ") +
-                (RETURN_CODABAR_START_END.Checked ? "E " : "H ") +
-                (ALSO_INVERTED.Checked ? "E " : "H ") + 
-                "\"ResimDosyasınınYolu\"";
+            Detaylar.Yaz("AutoRotate", AutoRotate.Checked);
+            Detaylar.Yaz("Multi", Multi.Checked);
+            Detaylar.Yaz("TRY_HARDER", TRY_HARDER.Checked);
+            Detaylar.Yaz("DumpBlackPoint", DumpBlackPoint.Checked);
+            Detaylar.Yaz("PURE_BARCODE", PURE_BARCODE.Checked);
+            Detaylar.Yaz("ASSUME_CODE_39_CHECK_DIGIT", ASSUME_CODE_39_CHECK_DIGIT.Checked);
+            Detaylar.Yaz("ASSUME_MSI_CHECK_DIGIT", ASSUME_MSI_CHECK_DIGIT.Checked);
+            Detaylar.Yaz("USE_CODE_39_EXTENDED_MODE", USE_CODE_39_EXTENDED_MODE.Checked);
+            Detaylar.Yaz("RELAXED_CODE_39_EXTENDED_MODE", RELAXED_CODE_39_EXTENDED_MODE.Checked);
+            Detaylar.Yaz("TRY_HARDER_WITHOUT_ROTATION", TRY_HARDER_WITHOUT_ROTATION.Checked);
+            Detaylar.Yaz("ASSUME_GS1", ASSUME_GS1.Checked);
+            Detaylar.Yaz("RETURN_CODABAR_START_END", RETURN_CODABAR_START_END.Checked);
+            Detaylar.Yaz("ALSO_INVERTED", ALSO_INVERTED.Checked);
 
             try
             {
-                if (Girdi.Image == null) throw new Exception("Resim yüklenmedi");
-
-                Barkod B = new Barkod(Parametre_İzleme.Text.Split(' '));
-                Çıktı.Text = B.Oku(new Bitmap(Girdi.Image)).Replace("\n", Environment.NewLine);
+                Ortak.Barkod = new Barkod_();
+                if (Girdi.Image != null && Ortak.Barkod.Oku(new Bitmap(Girdi.Image)))
+                {
+                    Çıktı.Text = Ortak.Depo_Çalıştır.YazıyaDönüştür().Replace("\n", Environment.NewLine);
+                }
+                else Çıktı.Text = "Bulunamadı";
             }
             catch (Exception ex)
             {
                 Çıktı.Text = ex.Message;
             }
+
+            Kaydet.Enabled = true;
+        }
+        private void Kaydet_Click(object sender, EventArgs e)
+        {
+            Klasör.Oluştur(System.IO.Path.GetDirectoryName(Ortak.Depo_Komut["Ayarlar", 0]));
+            System.IO.File.WriteAllText(Ortak.Depo_Komut["Ayarlar", 0], Ortak.Depo_Ayarlar.YazıyaDönüştür());
+
+            Kaydet.Enabled = false;
         }
 
-        private void Sığdır_CheckedChanged(object sender, EventArgs e)
+        private void Tuş_BunuKullan_Click(object sender, EventArgs e)
         {
-            Girdi.SizeMode = Sığdır.Checked ? PictureBoxSizeMode.Zoom : PictureBoxSizeMode.Normal;
+
+        }
+        private void Tuş_TekrarYakala_Click(object sender, EventArgs e)
+        {
+
+        }
+        private void Tuş_Çıkış_Click(object sender, EventArgs e)
+        {
+            Close();
         }
     }
 }

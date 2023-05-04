@@ -28,9 +28,17 @@
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
+    <DefineConstants>
+    </DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup>
+    <NoWin32Manifest>true</NoWin32Manifest>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>Resources\Barkod.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -91,8 +99,9 @@
     <Compile Include="AnaEkran.Designer.cs">
       <DependentUpon>AnaEkran.cs</DependentUpon>
     </Compile>
+    <Compile Include="Ortak\Ortak.cs" />
     <Compile Include="Program.cs" />
-    <Compile Include="Barkod.cs" />
+    <Compile Include="Ortak\Barkod.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="AnaEkran.resx">
       <DependentUpon>AnaEkran.cs</DependentUpon>
@@ -126,6 +135,21 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\zxing.dll" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\sag.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\sil.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\sol.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\sol_mavi.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Barkod.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -12,22 +12,65 @@ using ArgeMup.HazirKod.Ekİşlemler;
 
 namespace Barkod_Oku
 {
-    public class Barkod
+    public class Barkod_
     {
         _Config config = new _Config();
 
-        public Barkod(string[] Parametreler)
+        public Barkod_()
         {
-            if (Parametreler.Length != 16) throw new Exception("Parametreleri kontrol ediniz");
-
             config.Hints = new Dictionary<DecodeHintType, Object>();
-            
-            if (Parametreler[0] != "ASCII") config.Hints[DecodeHintType.CHARACTER_SET] = "UTF-8";
+            IDepo_Eleman Detaylar = Ortak.Depo_Ayarlar["Detaylar"];
+
+            if (Detaylar.Oku("Karakter Kodlama", "ASCII") != "ASCII") config.Hints[DecodeHintType.CHARACTER_SET] = "UTF-8";
 
             List<BarcodeFormat> Türler;
-            if (Parametreler[1] == "TUMU")
+            if (Detaylar.Oku("Tür", "Tümü") == "Tümü")
             {
-                Türler = new List<BarcodeFormat>()
+                Türler = _Tüm_Türler_();
+            }
+            else
+            {
+                Türler = new List<BarcodeFormat>();
+                foreach (string s in Detaylar["Tür"].İçeriği) 
+                {
+                    Türler.Add((BarcodeFormat)Enum.Parse(typeof(BarcodeFormat), s, false));
+                }
+
+                if (Türler.Count == 0) Türler = _Tüm_Türler_();
+            }
+            config.Hints[DecodeHintType.POSSIBLE_FORMATS] = Türler;
+
+            config.AutoRotate = Detaylar.Oku_Bit("AutoRotate", false);
+            config.Multi = Detaylar.Oku_Bit("Multi", false);
+
+            config.TryHarder = Detaylar.Oku_Bit("TRY_HARDER", false);
+            if (config.TryHarder) config.Hints[DecodeHintType.TRY_HARDER] = true;
+
+            config.DumpBlackPoint = Detaylar.Oku_Bit("DumpBlackPoint", false);
+
+            config.PureBarcode = Detaylar.Oku_Bit("PureBarcode", false);
+            if (config.PureBarcode) config.Hints[DecodeHintType.PURE_BARCODE] = true;
+
+            if (Detaylar.Oku_Bit("ASSUME_CODE_39_CHECK_DIGIT", false)) config.Hints[DecodeHintType.ASSUME_CODE_39_CHECK_DIGIT] = true;
+
+            if (Detaylar.Oku_Bit("ASSUME_MSI_CHECK_DIGIT", false)) config.Hints[DecodeHintType.ASSUME_MSI_CHECK_DIGIT] = true;
+
+            if (Detaylar.Oku_Bit("USE_CODE_39_EXTENDED_MODE", true)) config.Hints[DecodeHintType.USE_CODE_39_EXTENDED_MODE] = true;
+
+            if (Detaylar.Oku_Bit("RELAXED_CODE_39_EXTENDED_MODE", true)) config.Hints[DecodeHintType.RELAXED_CODE_39_EXTENDED_MODE] = true;
+
+            if (Detaylar.Oku_Bit("TRY_HARDER_WITHOUT_ROTATION", true)) config.Hints[DecodeHintType.TRY_HARDER_WITHOUT_ROTATION] = true;
+
+            if (Detaylar.Oku_Bit("ASSUME_GS1", false)) config.Hints[DecodeHintType.ASSUME_GS1] = true;
+
+            if (Detaylar.Oku_Bit("RETURN_CODABAR_START_END", false)) config.Hints[DecodeHintType.RETURN_CODABAR_START_END] = true;
+
+            config.TryInverted = Detaylar.Oku_Bit("ALSO_INVERTED", false);
+            if (config.TryInverted) config.Hints[DecodeHintType.ALSO_INVERTED] = true;
+
+            List<BarcodeFormat> _Tüm_Türler_()
+            {
+                return new List<BarcodeFormat>()
                 {
                     //Ürünlerde kullanılanlar
                     BarcodeFormat.UPC_A,
@@ -50,55 +93,9 @@ namespace Barkod_Oku
                     BarcodeFormat.MAXICODE
                 };
             }
-            else
-            {
-                Türler = new List<BarcodeFormat>();
-                string[] d = Parametreler[1].Split(',');
-
-                foreach (string s in d) 
-                {
-                    Türler.Add((BarcodeFormat)Enum.Parse(typeof(BarcodeFormat), s, false));
-                }
-            }
-            config.Hints[DecodeHintType.POSSIBLE_FORMATS] = Türler;
-
-            config.AutoRotate = Parametreler[2] == "E";
-            config.Multi = Parametreler[3] == "E";
-
-            config.TryHarder = Parametreler[4] == "E";
-            if (config.TryHarder) config.Hints[DecodeHintType.TRY_HARDER] = true;
-
-            config.DumpBlackPoint = Parametreler[5] == "E";
-
-            config.PureBarcode = Parametreler[6] == "E";
-            if (config.PureBarcode) config.Hints[DecodeHintType.PURE_BARCODE] = true;
-
-            bool b = Parametreler[7] == "E";
-            if (b) config.Hints[DecodeHintType.ASSUME_CODE_39_CHECK_DIGIT] = true;
-
-            b = Parametreler[8] == "E";
-            if (b) config.Hints[DecodeHintType.ASSUME_MSI_CHECK_DIGIT] = true;
-
-            b = Parametreler[9] == "E";
-            if (b) config.Hints[DecodeHintType.USE_CODE_39_EXTENDED_MODE] = true;
-
-            b = Parametreler[10] == "E";
-            if (b) config.Hints[DecodeHintType.RELAXED_CODE_39_EXTENDED_MODE] = true;
-
-            b = Parametreler[11] == "E";
-            if (b) config.Hints[DecodeHintType.TRY_HARDER_WITHOUT_ROTATION] = true;
-
-            b = Parametreler[12] == "E";
-            if (b) config.Hints[DecodeHintType.ASSUME_GS1] = true;
-
-            b = Parametreler[13] == "E";
-            if (b) config.Hints[DecodeHintType.RETURN_CODABAR_START_END] = true;
-
-            config.TryInverted = Parametreler[14] == "E";
-            if (config.TryInverted) config.Hints[DecodeHintType.ALSO_INVERTED] = true;
         }
 
-        public string Oku(Bitmap Resim)
+        public bool Oku(Bitmap Resim)
         {
             using (Resim)
             {
@@ -136,10 +133,12 @@ namespace Barkod_Oku
 
                 if (results != null && results.Length > 0 && results[0] != null)
                 {
-                    Depo_ d = new Depo_();
+                    Ortak.Depo_Çalıştır.Sil("Barkodlar", false, true);
+                    Ortak.Depo_Çalıştır.Yaz("Barkodlar", DateTime.Now);
+
                     for (int i = 0; i < results.Length; i++)
                     {
-                        IDepo_Eleman yeni = d.Bul(i.ToString(), true);
+                        IDepo_Eleman yeni =  Ortak.Depo_Çalıştır.Bul("Barkodlar/" + i, true);
                         yeni["İçerik"].İçeriği = new string[] { results[i].Text, results[i].RawBytes.HexYazıya() };
 
                         yeni["Tür"].İçeriği = new string[] { results[i].BarcodeFormat.ToString() };
@@ -150,13 +149,21 @@ namespace Barkod_Oku
 
                         for (int ii = 0; ii < results[i].ResultMetadata.Count; ii++)
                         {
-                            yeni["Detaylar/" + ii].İçeriği = new string[] { results[i].ResultMetadata.ElementAt(ii).Key.ToString(), results[i].ResultMetadata.ElementAt(ii).Value.ToString() };
+                            if (results[i].ResultMetadata.ElementAt(ii).Key == ResultMetadataType.BYTE_SEGMENTS)
+                            {
+                                List<byte[]> l = results[i].ResultMetadata.ElementAt(ii).Value as List<byte[]>;
+                                for (int iii = 0; iii < l.Count; iii++)
+                                {
+                                    yeni["Detaylar/" + ii + "/" + results[i].ResultMetadata.ElementAt(ii).Key.ToString() + "/" + iii].Yaz(null, l[iii].HexYazıya());
+                                }
+                            }
+                            else yeni["Detaylar/" + ii].İçeriği = new string[] { results[i].ResultMetadata.ElementAt(ii).Key.ToString(), results[i].ResultMetadata.ElementAt(ii).Value.ToString() };
                         }
                     }
-                    return d.YazıyaDönüştür();
+                    return true;
                 }
 
-                return "Bulunamadı";
+                return false;
             }
         }
 
