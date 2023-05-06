@@ -97,74 +97,71 @@ namespace Barkod_Oku
 
         public bool Oku(Bitmap Resim)
         {
-            using (Resim)
+            LuminanceSource source = new BitmapLuminanceSource(Resim);
+                
+            if (config.DumpBlackPoint)
             {
-                LuminanceSource source = new BitmapLuminanceSource(Resim);
+                BinaryBitmap bitmap = new BinaryBitmap(new HybridBinarizer(source));
+                dumpBlackPoint(Resim, bitmap, source);
+            }
 
-                if (config.DumpBlackPoint)
-                {
-                    var bitmap = new BinaryBitmap(new HybridBinarizer(source));
-                    dumpBlackPoint(Resim, bitmap, source);
-                }
+            BarcodeReader reader = new BarcodeReader { AutoRotate = config.AutoRotate };
+            foreach (var entry in config.Hints)
+            {
+                if (reader.Options.Hints.ContainsKey(entry.Key)) reader.Options.Hints[entry.Key] = entry.Value;
+                else reader.Options.Hints.Add(entry.Key, entry.Value);
+            }
 
-                var reader = new BarcodeReader { AutoRotate = config.AutoRotate };
+            Result[] results;
+            if (config.Multi) results = reader.DecodeMultiple(source); 
+            else results = new Result[] { reader.Decode(source) };
+
+            if (config.TryHarder && (results == null || results.Length == 0 || results[0] == null))
+            {
+                reader = new BarcodeReader(null, null, s => new GlobalHistogramBinarizer(s));
                 foreach (var entry in config.Hints)
                 {
                     if (reader.Options.Hints.ContainsKey(entry.Key)) reader.Options.Hints[entry.Key] = entry.Value;
                     else reader.Options.Hints.Add(entry.Key, entry.Value);
                 }
 
-                Result[] results;
-                if (config.Multi) results = reader.DecodeMultiple(source); 
+                if (config.Multi) results = reader.DecodeMultiple(source);
                 else results = new Result[] { reader.Decode(source) };
-
-                if (config.TryHarder && (results == null || results.Length == 0 || results[0] == null))
-                {
-                    reader = new BarcodeReader(null, null, s => new GlobalHistogramBinarizer(s));
-                    foreach (var entry in config.Hints)
-                    {
-                        if (reader.Options.Hints.ContainsKey(entry.Key)) reader.Options.Hints[entry.Key] = entry.Value;
-                        else reader.Options.Hints.Add(entry.Key, entry.Value);
-                    }
-
-                    if (config.Multi) results = reader.DecodeMultiple(source);
-                    else results = new Result[] { reader.Decode(source) };
-                }
-
-                if (results != null && results.Length > 0 && results[0] != null)
-                {
-                    Ortak.Depo_Çalıştır.Sil("Barkodlar", false, true);
-                    Ortak.Depo_Çalıştır.Yaz("Barkodlar", DateTime.Now);
-
-                    for (int i = 0; i < results.Length; i++)
-                    {
-                        IDepo_Eleman yeni =  Ortak.Depo_Çalıştır.Bul("Barkodlar/" + i, true);
-                        yeni["İçerik"].İçeriği = new string[] { results[i].Text, results[i].RawBytes.HexYazıya() };
-
-                        yeni["Tür"].İçeriği = new string[] { results[i].BarcodeFormat.ToString() };
-                        for (int ii = 0; ii < results[i].ResultPoints.Length; ii++)
-                        {
-                            yeni["Tür/Sıfırlama Noktası/" + ii].İçeriği = new string[] { results[i].ResultPoints[ii].X.ToString(), results[i].ResultPoints[ii].Y.ToString() };
-                        }
-
-                        for (int ii = 0; ii < results[i].ResultMetadata.Count; ii++)
-                        {
-                            if (results[i].ResultMetadata.ElementAt(ii).Key == ResultMetadataType.BYTE_SEGMENTS)
-                            {
-                                List<byte[]> l = results[i].ResultMetadata.ElementAt(ii).Value as List<byte[]>;
-                                for (int iii = 0; iii < l.Count; iii++)
-                                {
-                                    yeni["Detaylar/" + ii + "/" + results[i].ResultMetadata.ElementAt(ii).Key.ToString() + "/" + iii].Yaz(null, l[iii].HexYazıya());
-                                }
-                            }
-                            else yeni["Detaylar/" + ii].İçeriği = new string[] { results[i].ResultMetadata.ElementAt(ii).Key.ToString(), results[i].ResultMetadata.ElementAt(ii).Value.ToString() };
-                        }
-                    }
-                    return true;
-                }
-
-                return false;
             }
+                
+            if (results != null && results.Length > 0 && results[0] != null)
+            {
+                Ortak.Depo_Komut.Sil("Barkodlar", false, true);
+                Ortak.Depo_Komut.Yaz("Barkodlar", DateTime.Now);
+
+                for (int i = 0; i < results.Length; i++)
+                {
+                    IDepo_Eleman yeni =  Ortak.Depo_Komut.Bul("Barkodlar/" + i, true);
+                    yeni["İçerik"].İçeriği = new string[] { results[i].Text, results[i].RawBytes.HexYazıya() };
+
+                    yeni["Tür"].İçeriği = new string[] { results[i].BarcodeFormat.ToString() };
+                    for (int ii = 0; ii < results[i].ResultPoints.Length; ii++)
+                    {
+                        yeni["Tür/Sıfırlama Noktası/" + ii].İçeriği = new string[] { results[i].ResultPoints[ii].X.ToString(), results[i].ResultPoints[ii].Y.ToString() };
+                    }
+
+                    for (int ii = 0; ii < results[i].ResultMetadata.Count; ii++)
+                    {
+                        if (results[i].ResultMetadata.ElementAt(ii).Key == ResultMetadataType.BYTE_SEGMENTS)
+                        {
+                            List<byte[]> l = results[i].ResultMetadata.ElementAt(ii).Value as List<byte[]>;
+                            for (int iii = 0; iii < l.Count; iii++)
+                            {
+                                yeni["Detaylar/" + ii + "/" + results[i].ResultMetadata.ElementAt(ii).Key.ToString() + "/" + iii].Yaz(null, l[iii].HexYazıya());
+                            }
+                        }
+                        else yeni["Detaylar/" + ii].İçeriği = new string[] { results[i].ResultMetadata.ElementAt(ii).Key.ToString(), results[i].ResultMetadata.ElementAt(ii).Value.ToString() };
+                    }
+                }
+                return true;
+            }
+
+            return false;
         }
 
         /**

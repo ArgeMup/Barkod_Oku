@@ -43,9 +43,12 @@
             this.TRY_HARDER = new System.Windows.Forms.CheckBox();
             this.DumpBlackPoint = new System.Windows.Forms.CheckBox();
             this.Tür = new System.Windows.Forms.CheckedListBox();
-            this.Girdi = new System.Windows.Forms.PictureBox();
             this.Çıktı = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
+            this.Tuş_Çıkış = new System.Windows.Forms.Button();
+            this.Tuş_BunuKullan = new System.Windows.Forms.Button();
+            this.Tuş_TekrarYakala = new System.Windows.Forms.Button();
+            this.Girdi = new System.Windows.Forms.PictureBox();
             this.KarakterKodlama = new System.Windows.Forms.ComboBox();
             this.label4 = new System.Windows.Forms.Label();
             this.Multi = new System.Windows.Forms.CheckBox();
@@ -53,7 +56,8 @@
             this.Sığdır = new System.Windows.Forms.CheckBox();
             this.P_Sol_Sağ = new System.Windows.Forms.SplitContainer();
             this.Kaydet = new System.Windows.Forms.Button();
-            this.KameraNumarası = new System.Windows.Forms.NumericUpDown();
+            this.KameraNo = new System.Windows.Forms.NumericUpDown();
+            this.ResimSayacı = new System.Windows.Forms.Label();
             this.P6 = new System.Windows.Forms.Panel();
             this.P6_Kullan = new System.Windows.Forms.CheckBox();
             this.P6_Resim = new System.Windows.Forms.PictureBox();
@@ -72,15 +76,13 @@
             this.P1 = new System.Windows.Forms.Panel();
             this.P1_Kullan = new System.Windows.Forms.CheckBox();
             this.P1_Resim = new System.Windows.Forms.PictureBox();
-            this.Tuş_Çıkış = new System.Windows.Forms.Button();
-            this.Tuş_BunuKullan = new System.Windows.Forms.Button();
-            this.Tuş_TekrarYakala = new System.Windows.Forms.Button();
+            this.İşçi = new System.ComponentModel.BackgroundWorker();
             ((System.ComponentModel.ISupportInitialize)(this.Girdi)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.P_Sol_Sağ)).BeginInit();
             this.P_Sol_Sağ.Panel1.SuspendLayout();
             this.P_Sol_Sağ.Panel2.SuspendLayout();
             this.P_Sol_Sağ.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.KameraNumarası)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.KameraNo)).BeginInit();
             this.P6.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.P6_Resim)).BeginInit();
             this.P3.SuspendLayout();
@@ -264,32 +266,21 @@
             "Tümünü Dahil Et"});
             this.Tür.Location = new System.Drawing.Point(302, 70);
             this.Tür.Name = "Tür";
-            this.Tür.Size = new System.Drawing.Size(321, 242);
+            this.Tür.Size = new System.Drawing.Size(321, 191);
             this.Tür.TabIndex = 27;
             this.İpUcu.SetToolTip(this.Tür, "Mevcut görsel içinde aranacak barkod türleri");
             this.Tür.SelectedIndexChanged += new System.EventHandler(this.Ayar_Değişti);
-            // 
-            // Girdi
-            // 
-            this.Girdi.BackColor = System.Drawing.Color.Black;
-            this.Girdi.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.Girdi.Location = new System.Drawing.Point(0, 0);
-            this.Girdi.Name = "Girdi";
-            this.Girdi.Size = new System.Drawing.Size(439, 449);
-            this.Girdi.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
-            this.Girdi.TabIndex = 33;
-            this.Girdi.TabStop = false;
             // 
             // Çıktı
             // 
             this.Çıktı.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.Çıktı.Location = new System.Drawing.Point(302, 322);
+            this.Çıktı.Location = new System.Drawing.Point(302, 270);
             this.Çıktı.Multiline = true;
             this.Çıktı.Name = "Çıktı";
             this.Çıktı.ReadOnly = true;
             this.Çıktı.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-            this.Çıktı.Size = new System.Drawing.Size(321, 119);
+            this.Çıktı.Size = new System.Drawing.Size(321, 171);
             this.Çıktı.TabIndex = 30;
             this.İpUcu.SetToolTip(this.Çıktı, "Mevcut görselin içeriği");
             this.Çıktı.WordWrap = false;
@@ -299,10 +290,70 @@
             this.label1.AutoSize = true;
             this.label1.Location = new System.Drawing.Point(8, 14);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(115, 16);
+            this.label1.Size = new System.Drawing.Size(75, 16);
             this.label1.TabIndex = 35;
-            this.label1.Text = "Kamera Numarası";
+            this.label1.Text = "Kamera No";
             this.İpUcu.SetToolTip(this.label1, "Bilgisayarda yerleşik kamera varsa 0 olabilir.");
+            // 
+            // Tuş_Çıkış
+            // 
+            this.Tuş_Çıkış.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
+            this.Tuş_Çıkış.Image = global::Barkod_Oku.Properties.Resources.sil;
+            this.Tuş_Çıkış.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.Tuş_Çıkış.Location = new System.Drawing.Point(59, 397);
+            this.Tuş_Çıkış.Name = "Tuş_Çıkış";
+            this.Tuş_Çıkış.Padding = new System.Windows.Forms.Padding(3);
+            this.Tuş_Çıkış.Size = new System.Drawing.Size(104, 41);
+            this.Tuş_Çıkış.TabIndex = 40;
+            this.Tuş_Çıkış.Text = "Çıkış";
+            this.Tuş_Çıkış.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.İpUcu.SetToolTip(this.Tuş_Çıkış, "ESC");
+            this.Tuş_Çıkış.UseVisualStyleBackColor = true;
+            this.Tuş_Çıkış.Click += new System.EventHandler(this.Tuş_Çıkış_Click);
+            // 
+            // Tuş_BunuKullan
+            // 
+            this.Tuş_BunuKullan.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
+            this.Tuş_BunuKullan.Image = global::Barkod_Oku.Properties.Resources.sag;
+            this.Tuş_BunuKullan.ImageAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.Tuş_BunuKullan.Location = new System.Drawing.Point(279, 397);
+            this.Tuş_BunuKullan.Name = "Tuş_BunuKullan";
+            this.Tuş_BunuKullan.Padding = new System.Windows.Forms.Padding(3);
+            this.Tuş_BunuKullan.Size = new System.Drawing.Size(104, 41);
+            this.Tuş_BunuKullan.TabIndex = 39;
+            this.Tuş_BunuKullan.Text = "Kullan";
+            this.Tuş_BunuKullan.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.İpUcu.SetToolTip(this.Tuş_BunuKullan, "F2");
+            this.Tuş_BunuKullan.UseVisualStyleBackColor = true;
+            this.Tuş_BunuKullan.Click += new System.EventHandler(this.Tuş_BunuKullan_Click);
+            // 
+            // Tuş_TekrarYakala
+            // 
+            this.Tuş_TekrarYakala.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
+            this.Tuş_TekrarYakala.Image = global::Barkod_Oku.Properties.Resources.sol_mavi;
+            this.Tuş_TekrarYakala.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.Tuş_TekrarYakala.Location = new System.Drawing.Point(169, 397);
+            this.Tuş_TekrarYakala.Name = "Tuş_TekrarYakala";
+            this.Tuş_TekrarYakala.Padding = new System.Windows.Forms.Padding(3);
+            this.Tuş_TekrarYakala.Size = new System.Drawing.Size(104, 41);
+            this.Tuş_TekrarYakala.TabIndex = 38;
+            this.Tuş_TekrarYakala.Text = "Yakala";
+            this.Tuş_TekrarYakala.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.İpUcu.SetToolTip(this.Tuş_TekrarYakala, "F1");
+            this.Tuş_TekrarYakala.UseVisualStyleBackColor = true;
+            this.Tuş_TekrarYakala.Click += new System.EventHandler(this.Tuş_TekrarYakala_Click);
+            // 
+            // Girdi
+            // 
+            this.Girdi.BackColor = System.Drawing.Color.YellowGreen;
+            this.Girdi.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.Girdi.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.Girdi.Location = new System.Drawing.Point(0, 0);
+            this.Girdi.Name = "Girdi";
+            this.Girdi.Size = new System.Drawing.Size(439, 449);
+            this.Girdi.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
+            this.Girdi.TabIndex = 33;
+            this.Girdi.TabStop = false;
             // 
             // KarakterKodlama
             // 
@@ -374,7 +425,7 @@
             // P_Sol_Sağ.Panel1
             // 
             this.P_Sol_Sağ.Panel1.Controls.Add(this.Kaydet);
-            this.P_Sol_Sağ.Panel1.Controls.Add(this.KameraNumarası);
+            this.P_Sol_Sağ.Panel1.Controls.Add(this.KameraNo);
             this.P_Sol_Sağ.Panel1.Controls.Add(this.label1);
             this.P_Sol_Sağ.Panel1.Controls.Add(this.PURE_BARCODE);
             this.P_Sol_Sağ.Panel1.Controls.Add(this.Çıktı);
@@ -397,6 +448,7 @@
             // 
             // P_Sol_Sağ.Panel2
             // 
+            this.P_Sol_Sağ.Panel2.Controls.Add(this.ResimSayacı);
             this.P_Sol_Sağ.Panel2.Controls.Add(this.P6);
             this.P_Sol_Sağ.Panel2.Controls.Add(this.P3);
             this.P_Sol_Sağ.Panel2.Controls.Add(this.P5);
@@ -424,25 +476,36 @@
             this.Kaydet.UseVisualStyleBackColor = true;
             this.Kaydet.Click += new System.EventHandler(this.Kaydet_Click);
             // 
-            // KameraNumarası
+            // KameraNo
             // 
-            this.KameraNumarası.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            this.KameraNo.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.KameraNumarası.Location = new System.Drawing.Point(302, 12);
-            this.KameraNumarası.Maximum = new decimal(new int[] {
+            this.KameraNo.Location = new System.Drawing.Point(302, 12);
+            this.KameraNo.Maximum = new decimal(new int[] {
             65535,
             0,
             0,
             0});
-            this.KameraNumarası.Name = "KameraNumarası";
-            this.KameraNumarası.Size = new System.Drawing.Size(321, 22);
-            this.KameraNumarası.TabIndex = 36;
-            this.KameraNumarası.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-            this.KameraNumarası.ValueChanged += new System.EventHandler(this.Ayar_Değişti);
+            this.KameraNo.Name = "KameraNo";
+            this.KameraNo.Size = new System.Drawing.Size(321, 22);
+            this.KameraNo.TabIndex = 36;
+            this.KameraNo.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.KameraNo.ValueChanged += new System.EventHandler(this.KameraNo_ValueChanged);
+            // 
+            // ResimSayacı
+            // 
+            this.ResimSayacı.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.ResimSayacı.AutoSize = true;
+            this.ResimSayacı.Location = new System.Drawing.Point(0, 434);
+            this.ResimSayacı.Name = "ResimSayacı";
+            this.ResimSayacı.Size = new System.Drawing.Size(14, 16);
+            this.ResimSayacı.TabIndex = 58;
+            this.ResimSayacı.Text = "0";
             // 
             // P6
             // 
             this.P6.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.P6.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
             this.P6.Controls.Add(this.P6_Kullan);
             this.P6.Controls.Add(this.P6_Resim);
             this.P6.Location = new System.Drawing.Point(326, 283);
@@ -467,14 +530,16 @@
             this.P6_Resim.Location = new System.Drawing.Point(0, 0);
             this.P6_Resim.Margin = new System.Windows.Forms.Padding(0);
             this.P6_Resim.Name = "P6_Resim";
-            this.P6_Resim.Size = new System.Drawing.Size(100, 100);
+            this.P6_Resim.Size = new System.Drawing.Size(96, 96);
             this.P6_Resim.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
             this.P6_Resim.TabIndex = 41;
             this.P6_Resim.TabStop = false;
+            this.P6_Resim.MouseClick += new System.Windows.Forms.MouseEventHandler(this.P_Resim_MouseClick);
             // 
             // P3
             // 
             this.P3.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.P3.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
             this.P3.Controls.Add(this.P3_Kullan);
             this.P3.Controls.Add(this.P3_Resim);
             this.P3.Location = new System.Drawing.Point(13, 283);
@@ -499,14 +564,16 @@
             this.P3_Resim.Location = new System.Drawing.Point(0, 0);
             this.P3_Resim.Margin = new System.Windows.Forms.Padding(0);
             this.P3_Resim.Name = "P3_Resim";
-            this.P3_Resim.Size = new System.Drawing.Size(100, 100);
+            this.P3_Resim.Size = new System.Drawing.Size(96, 96);
             this.P3_Resim.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
             this.P3_Resim.TabIndex = 41;
             this.P3_Resim.TabStop = false;
+            this.P3_Resim.MouseClick += new System.Windows.Forms.MouseEventHandler(this.P_Resim_MouseClick);
             // 
             // P5
             // 
             this.P5.Anchor = System.Windows.Forms.AnchorStyles.Right;
+            this.P5.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
             this.P5.Controls.Add(this.P5_Kullan);
             this.P5.Controls.Add(this.P5_Resim);
             this.P5.Location = new System.Drawing.Point(326, 152);
@@ -531,14 +598,16 @@
             this.P5_Resim.Location = new System.Drawing.Point(0, 0);
             this.P5_Resim.Margin = new System.Windows.Forms.Padding(0);
             this.P5_Resim.Name = "P5_Resim";
-            this.P5_Resim.Size = new System.Drawing.Size(100, 100);
+            this.P5_Resim.Size = new System.Drawing.Size(96, 96);
             this.P5_Resim.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
             this.P5_Resim.TabIndex = 41;
             this.P5_Resim.TabStop = false;
+            this.P5_Resim.MouseClick += new System.Windows.Forms.MouseEventHandler(this.P_Resim_MouseClick);
             // 
             // P2
             // 
             this.P2.Anchor = System.Windows.Forms.AnchorStyles.Left;
+            this.P2.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
             this.P2.Controls.Add(this.P2_Kullan);
             this.P2.Controls.Add(this.P2_Resim);
             this.P2.Location = new System.Drawing.Point(13, 152);
@@ -563,14 +632,16 @@
             this.P2_Resim.Location = new System.Drawing.Point(0, 0);
             this.P2_Resim.Margin = new System.Windows.Forms.Padding(0);
             this.P2_Resim.Name = "P2_Resim";
-            this.P2_Resim.Size = new System.Drawing.Size(100, 100);
+            this.P2_Resim.Size = new System.Drawing.Size(96, 96);
             this.P2_Resim.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
             this.P2_Resim.TabIndex = 41;
             this.P2_Resim.TabStop = false;
+            this.P2_Resim.MouseClick += new System.Windows.Forms.MouseEventHandler(this.P_Resim_MouseClick);
             // 
             // P4
             // 
             this.P4.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.P4.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
             this.P4.Controls.Add(this.P4_Kullan);
             this.P4.Controls.Add(this.P4_Resim);
             this.P4.Location = new System.Drawing.Point(326, 20);
@@ -595,13 +666,16 @@
             this.P4_Resim.Location = new System.Drawing.Point(0, 0);
             this.P4_Resim.Margin = new System.Windows.Forms.Padding(0);
             this.P4_Resim.Name = "P4_Resim";
-            this.P4_Resim.Size = new System.Drawing.Size(100, 100);
+            this.P4_Resim.Size = new System.Drawing.Size(96, 96);
             this.P4_Resim.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
             this.P4_Resim.TabIndex = 41;
             this.P4_Resim.TabStop = false;
+            this.P4_Resim.MouseClick += new System.Windows.Forms.MouseEventHandler(this.P_Resim_MouseClick);
             // 
             // P1
             // 
+            this.P1.BackColor = System.Drawing.SystemColors.Control;
+            this.P1.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
             this.P1.Controls.Add(this.P1_Kullan);
             this.P1.Controls.Add(this.P1_Resim);
             this.P1.Location = new System.Drawing.Point(13, 20);
@@ -626,57 +700,17 @@
             this.P1_Resim.Location = new System.Drawing.Point(0, 0);
             this.P1_Resim.Margin = new System.Windows.Forms.Padding(0);
             this.P1_Resim.Name = "P1_Resim";
-            this.P1_Resim.Size = new System.Drawing.Size(100, 100);
+            this.P1_Resim.Size = new System.Drawing.Size(96, 96);
             this.P1_Resim.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
             this.P1_Resim.TabIndex = 41;
             this.P1_Resim.TabStop = false;
+            this.P1_Resim.MouseClick += new System.Windows.Forms.MouseEventHandler(this.P_Resim_MouseClick);
             // 
-            // Tuş_Çıkış
+            // İşçi
             // 
-            this.Tuş_Çıkış.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
-            this.Tuş_Çıkış.Image = global::Barkod_Oku.Properties.Resources.sil;
-            this.Tuş_Çıkış.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.Tuş_Çıkış.Location = new System.Drawing.Point(59, 397);
-            this.Tuş_Çıkış.Name = "Tuş_Çıkış";
-            this.Tuş_Çıkış.Padding = new System.Windows.Forms.Padding(3);
-            this.Tuş_Çıkış.Size = new System.Drawing.Size(104, 41);
-            this.Tuş_Çıkış.TabIndex = 40;
-            this.Tuş_Çıkış.Text = "Çıkış";
-            this.Tuş_Çıkış.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-            this.Tuş_Çıkış.UseVisualStyleBackColor = true;
-            this.Tuş_Çıkış.Click += new System.EventHandler(this.Tuş_Çıkış_Click);
-            // 
-            // Tuş_BunuKullan
-            // 
-            this.Tuş_BunuKullan.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
-            this.Tuş_BunuKullan.Image = global::Barkod_Oku.Properties.Resources.sag;
-            this.Tuş_BunuKullan.ImageAlign = System.Drawing.ContentAlignment.MiddleRight;
-            this.Tuş_BunuKullan.Location = new System.Drawing.Point(279, 397);
-            this.Tuş_BunuKullan.Name = "Tuş_BunuKullan";
-            this.Tuş_BunuKullan.Padding = new System.Windows.Forms.Padding(3);
-            this.Tuş_BunuKullan.Size = new System.Drawing.Size(104, 41);
-            this.Tuş_BunuKullan.TabIndex = 39;
-            this.Tuş_BunuKullan.Text = "Kullan";
-            this.Tuş_BunuKullan.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.Tuş_BunuKullan.UseVisualStyleBackColor = true;
-            this.Tuş_BunuKullan.Visible = false;
-            this.Tuş_BunuKullan.Click += new System.EventHandler(this.Tuş_BunuKullan_Click);
-            // 
-            // Tuş_TekrarYakala
-            // 
-            this.Tuş_TekrarYakala.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
-            this.Tuş_TekrarYakala.Image = global::Barkod_Oku.Properties.Resources.sol;
-            this.Tuş_TekrarYakala.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.Tuş_TekrarYakala.Location = new System.Drawing.Point(169, 397);
-            this.Tuş_TekrarYakala.Name = "Tuş_TekrarYakala";
-            this.Tuş_TekrarYakala.Padding = new System.Windows.Forms.Padding(3);
-            this.Tuş_TekrarYakala.Size = new System.Drawing.Size(104, 41);
-            this.Tuş_TekrarYakala.TabIndex = 38;
-            this.Tuş_TekrarYakala.Text = "Yakala";
-            this.Tuş_TekrarYakala.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-            this.Tuş_TekrarYakala.UseVisualStyleBackColor = true;
-            this.Tuş_TekrarYakala.Visible = false;
-            this.Tuş_TekrarYakala.Click += new System.EventHandler(this.Tuş_TekrarYakala_Click);
+            this.İşçi.WorkerReportsProgress = true;
+            this.İşçi.DoWork += new System.ComponentModel.DoWorkEventHandler(this.İşçi_DoWork);
+            this.İşçi.ProgressChanged += new System.ComponentModel.ProgressChangedEventHandler(this.İşçi_ProgressChanged);
             // 
             // AnaEkran
             // 
@@ -687,6 +721,7 @@
             this.Controls.Add(this.P_Sol_Sağ);
             this.DoubleBuffered = true;
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
+            this.KeyPreview = true;
             this.Name = "AnaEkran";
             this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
@@ -695,13 +730,15 @@
             this.Shown += new System.EventHandler(this.AnaEkran_Shown);
             this.DragDrop += new System.Windows.Forms.DragEventHandler(this.AnaEkran_DragDrop);
             this.DragEnter += new System.Windows.Forms.DragEventHandler(this.AnaEkran_DragEnter);
+            this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.AnaEkran_KeyDown);
             ((System.ComponentModel.ISupportInitialize)(this.Girdi)).EndInit();
             this.P_Sol_Sağ.Panel1.ResumeLayout(false);
             this.P_Sol_Sağ.Panel1.PerformLayout();
             this.P_Sol_Sağ.Panel2.ResumeLayout(false);
+            this.P_Sol_Sağ.Panel2.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.P_Sol_Sağ)).EndInit();
             this.P_Sol_Sağ.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.KameraNumarası)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.KameraNo)).EndInit();
             this.P6.ResumeLayout(false);
             this.P6.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.P6_Resim)).EndInit();
@@ -748,7 +785,7 @@
         private System.Windows.Forms.PictureBox Girdi;
         private System.Windows.Forms.TextBox Çıktı;
         private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.NumericUpDown KameraNumarası;
+        private System.Windows.Forms.NumericUpDown KameraNo;
         private System.Windows.Forms.Button Kaydet;
         private System.Windows.Forms.Button Tuş_Çıkış;
         private System.Windows.Forms.Button Tuş_BunuKullan;
@@ -771,6 +808,8 @@
         private System.Windows.Forms.CheckBox P4_Kullan;
         private System.Windows.Forms.PictureBox P4_Resim;
         private System.Windows.Forms.Panel P1;
+        private System.ComponentModel.BackgroundWorker İşçi;
+        private System.Windows.Forms.Label ResimSayacı;
     }
 }
 

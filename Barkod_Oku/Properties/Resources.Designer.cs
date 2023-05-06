@@ -71,6 +71,16 @@ namespace Barkod_Oku.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        internal static byte[] EkDosyalar {
+            get {
+                object obj = ResourceManager.GetObject("EkDosyalar", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
         internal static System.Drawing.Bitmap sag {
@@ -107,16 +117,6 @@ namespace Barkod_Oku.Properties {
             get {
                 object obj = ResourceManager.GetObject("sol_mavi", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Byte[].
-        /// </summary>
-        internal static byte[] zxing {
-            get {
-                object obj = ResourceManager.GetObject("zxing", resourceCulture);
-                return ((byte[])(obj));
             }
         }
     }

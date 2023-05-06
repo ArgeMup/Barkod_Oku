@@ -9,25 +9,15 @@ Many thanks to the team of the [zxing.net project](https://https://github.com/mi
 Many thanks to the team of the [zxing project](https://github.com/zxing/zxing) for their great work. ZXing.Net would not be possible without your work!
 
     Seçenek 1 - Barkod_Oku.exe <Komut Verme Depo Dosyasının Yolu>
-    Seçenek 2 - Barkod_Oku.exe <Komut Verme Depo Dosyası İçeriğinin Base64 Hali>
-    Seçenek 3 - Barkod_Oku.exe YeniYazilimKontrolu                                  (Kontrolü bitirip kapanır)
-    Seçenek 4 - Barkod_Oku.exe                                                      (Bu durumda değişiklikleri kendi alt klasörüne kaydeder)
+    Seçenek 2 - Barkod_Oku.exe YeniYazilimKontrolu                                  (Kontrolü bitirip kapanır)
+    Seçenek 3 - Barkod_Oku.exe                                                      (Bu durumda değişiklikleri kendi alt klasörüne kaydeder)
 
     Komut Verme Depo Dosyası İçeriği
         Komut / Ayarla VEYA
-        Komut / Çalıştır
+        Komut / Barkod Oku veya Resim Çek / Başarılı veya Hatalı / Açıklaması
         Ayarlar / <Ayarlar Depo Dosya Yolu>
-
-    Uygulama "Çalıştır" komutuyla çalıştırıldığında "Çalıştır.mup" dosyasının üretilmesini veya son değişiklik tarihinin değişmesini bekler.
-        <Kök Klasör - ...\Barkod_Oku.exe dosya yolu>\Çalıştır.mup
-
-    Çalıştır Depo Dosyası İçeriği
-        Komut / Barkod Oku veya
-        Komut / Resim Çek veya
-        Komut / Kamera Bağlı Mı
         Resimler / <Okuma Tarihi>
             <Resim No> / <Dosya Yolu>
-        Kamera Bağlı Mı / bit
         Barkodlar / <Okuma Tarihi>
             <Barkod No>
                 İçerik / <yazı> / <hex>
@@ -42,13 +32,14 @@ Many thanks to the team of the [zxing project](https://github.com/zxing/zxing) f
                     <Sıra No> / ERROR_CORRECTION_LEVEL / <Detay>
                     <Sıra No> / SYMBOLOGY_IDENTIFIER / <Detay>
                     <Sıra No> / ORIENTATION / <Detay>
+                    <Sıra No> / ... / <Detay>
         
     Ayarlar Depo Dosyası İçeriği
         Detaylar
             Kamera No / Tamsayı
             Karakter Kodlama / ASCII veya UTF-8
             Tür / Tümü veya <BarcodeFormat> / <BarcodeFormat> / ...
-            AutoRotate
+            AutoRotate / bit
             Multi
             TRY_HARDER
             DumpBlackPoint
