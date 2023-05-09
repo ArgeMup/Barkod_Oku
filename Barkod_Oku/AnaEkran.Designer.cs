@@ -48,6 +48,11 @@
             this.Tuş_Çıkış = new System.Windows.Forms.Button();
             this.Tuş_BunuKullan = new System.Windows.Forms.Button();
             this.Tuş_TekrarYakala = new System.Windows.Forms.Button();
+            this.Kamera_No = new System.Windows.Forms.NumericUpDown();
+            this.Kamera_Çözünürlük_Yatay = new System.Windows.Forms.NumericUpDown();
+            this.Kamera_Çözünürlük_Dikey = new System.Windows.Forms.NumericUpDown();
+            this.Kamera_Düzeltme_Parlaklık = new System.Windows.Forms.NumericUpDown();
+            this.Kamera_Düzeltme_Keskinlik = new System.Windows.Forms.NumericUpDown();
             this.Girdi = new System.Windows.Forms.PictureBox();
             this.KarakterKodlama = new System.Windows.Forms.ComboBox();
             this.label4 = new System.Windows.Forms.Label();
@@ -56,7 +61,6 @@
             this.Sığdır = new System.Windows.Forms.CheckBox();
             this.P_Sol_Sağ = new System.Windows.Forms.SplitContainer();
             this.Kaydet = new System.Windows.Forms.Button();
-            this.KameraNo = new System.Windows.Forms.NumericUpDown();
             this.ResimSayacı = new System.Windows.Forms.Label();
             this.P6 = new System.Windows.Forms.Panel();
             this.P6_Kullan = new System.Windows.Forms.CheckBox();
@@ -77,12 +81,16 @@
             this.P1_Kullan = new System.Windows.Forms.CheckBox();
             this.P1_Resim = new System.Windows.Forms.PictureBox();
             this.İşçi = new System.ComponentModel.BackgroundWorker();
+            ((System.ComponentModel.ISupportInitialize)(this.Kamera_No)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.Kamera_Çözünürlük_Yatay)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.Kamera_Çözünürlük_Dikey)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.Kamera_Düzeltme_Parlaklık)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.Kamera_Düzeltme_Keskinlik)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.Girdi)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.P_Sol_Sağ)).BeginInit();
             this.P_Sol_Sağ.Panel1.SuspendLayout();
             this.P_Sol_Sağ.Panel2.SuspendLayout();
             this.P_Sol_Sağ.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.KameraNo)).BeginInit();
             this.P6.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.P6_Resim)).BeginInit();
             this.P3.SuspendLayout();
@@ -290,9 +298,9 @@
             this.label1.AutoSize = true;
             this.label1.Location = new System.Drawing.Point(8, 14);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(75, 16);
+            this.label1.Size = new System.Drawing.Size(54, 16);
             this.label1.TabIndex = 35;
-            this.label1.Text = "Kamera No";
+            this.label1.Text = "Kamera";
             this.İpUcu.SetToolTip(this.label1, "Bilgisayarda yerleşik kamera varsa 0 olabilir.");
             // 
             // Tuş_Çıkış
@@ -342,6 +350,107 @@
             this.İpUcu.SetToolTip(this.Tuş_TekrarYakala, "F1");
             this.Tuş_TekrarYakala.UseVisualStyleBackColor = true;
             this.Tuş_TekrarYakala.Click += new System.EventHandler(this.Tuş_TekrarYakala_Click);
+            // 
+            // Kamera_No
+            // 
+            this.Kamera_No.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.Kamera_No.Location = new System.Drawing.Point(302, 12);
+            this.Kamera_No.Maximum = new decimal(new int[] {
+            65535,
+            0,
+            0,
+            0});
+            this.Kamera_No.Name = "Kamera_No";
+            this.Kamera_No.Size = new System.Drawing.Size(149, 22);
+            this.Kamera_No.TabIndex = 36;
+            this.Kamera_No.TabStop = false;
+            this.Kamera_No.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.İpUcu.SetToolTip(this.Kamera_No, "Kamera No");
+            this.Kamera_No.Leave += new System.EventHandler(this.Kamera_Leave);
+            // 
+            // Kamera_Çözünürlük_Yatay
+            // 
+            this.Kamera_Çözünürlük_Yatay.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.Kamera_Çözünürlük_Yatay.Location = new System.Drawing.Point(457, 12);
+            this.Kamera_Çözünürlük_Yatay.Maximum = new decimal(new int[] {
+            65535,
+            0,
+            0,
+            0});
+            this.Kamera_Çözünürlük_Yatay.Name = "Kamera_Çözünürlük_Yatay";
+            this.Kamera_Çözünürlük_Yatay.Size = new System.Drawing.Size(80, 22);
+            this.Kamera_Çözünürlük_Yatay.TabIndex = 38;
+            this.Kamera_Çözünürlük_Yatay.TabStop = false;
+            this.Kamera_Çözünürlük_Yatay.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.İpUcu.SetToolTip(this.Kamera_Çözünürlük_Yatay, "Yatay Çözünürlük");
+            this.Kamera_Çözünürlük_Yatay.Value = new decimal(new int[] {
+            1920,
+            0,
+            0,
+            0});
+            this.Kamera_Çözünürlük_Yatay.Leave += new System.EventHandler(this.Kamera_Leave);
+            // 
+            // Kamera_Çözünürlük_Dikey
+            // 
+            this.Kamera_Çözünürlük_Dikey.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.Kamera_Çözünürlük_Dikey.Location = new System.Drawing.Point(543, 12);
+            this.Kamera_Çözünürlük_Dikey.Maximum = new decimal(new int[] {
+            65535,
+            0,
+            0,
+            0});
+            this.Kamera_Çözünürlük_Dikey.Name = "Kamera_Çözünürlük_Dikey";
+            this.Kamera_Çözünürlük_Dikey.Size = new System.Drawing.Size(80, 22);
+            this.Kamera_Çözünürlük_Dikey.TabIndex = 39;
+            this.Kamera_Çözünürlük_Dikey.TabStop = false;
+            this.Kamera_Çözünürlük_Dikey.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.İpUcu.SetToolTip(this.Kamera_Çözünürlük_Dikey, "Dikey Çözünürlük");
+            this.Kamera_Çözünürlük_Dikey.Value = new decimal(new int[] {
+            1080,
+            0,
+            0,
+            0});
+            this.Kamera_Çözünürlük_Dikey.Leave += new System.EventHandler(this.Kamera_Leave);
+            // 
+            // Kamera_Düzeltme_Parlaklık
+            // 
+            this.Kamera_Düzeltme_Parlaklık.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.Kamera_Düzeltme_Parlaklık.DecimalPlaces = 2;
+            this.Kamera_Düzeltme_Parlaklık.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            65536});
+            this.Kamera_Düzeltme_Parlaklık.Location = new System.Drawing.Point(270, 0);
+            this.Kamera_Düzeltme_Parlaklık.Name = "Kamera_Düzeltme_Parlaklık";
+            this.Kamera_Düzeltme_Parlaklık.Size = new System.Drawing.Size(80, 22);
+            this.Kamera_Düzeltme_Parlaklık.TabIndex = 59;
+            this.Kamera_Düzeltme_Parlaklık.TabStop = false;
+            this.Kamera_Düzeltme_Parlaklık.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.İpUcu.SetToolTip(this.Kamera_Düzeltme_Parlaklık, "Parlaklık");
+            // 
+            // Kamera_Düzeltme_Keskinlik
+            // 
+            this.Kamera_Düzeltme_Keskinlik.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.Kamera_Düzeltme_Keskinlik.DecimalPlaces = 2;
+            this.Kamera_Düzeltme_Keskinlik.Location = new System.Drawing.Point(356, 0);
+            this.Kamera_Düzeltme_Keskinlik.Maximum = new decimal(new int[] {
+            200,
+            0,
+            0,
+            0});
+            this.Kamera_Düzeltme_Keskinlik.Minimum = new decimal(new int[] {
+            200,
+            0,
+            0,
+            -2147483648});
+            this.Kamera_Düzeltme_Keskinlik.Name = "Kamera_Düzeltme_Keskinlik";
+            this.Kamera_Düzeltme_Keskinlik.Size = new System.Drawing.Size(80, 22);
+            this.Kamera_Düzeltme_Keskinlik.TabIndex = 60;
+            this.Kamera_Düzeltme_Keskinlik.TabStop = false;
+            this.Kamera_Düzeltme_Keskinlik.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.İpUcu.SetToolTip(this.Kamera_Düzeltme_Keskinlik, "Keskinlik");
             // 
             // Girdi
             // 
@@ -424,8 +533,10 @@
             // 
             // P_Sol_Sağ.Panel1
             // 
+            this.P_Sol_Sağ.Panel1.Controls.Add(this.Kamera_Çözünürlük_Dikey);
+            this.P_Sol_Sağ.Panel1.Controls.Add(this.Kamera_Çözünürlük_Yatay);
             this.P_Sol_Sağ.Panel1.Controls.Add(this.Kaydet);
-            this.P_Sol_Sağ.Panel1.Controls.Add(this.KameraNo);
+            this.P_Sol_Sağ.Panel1.Controls.Add(this.Kamera_No);
             this.P_Sol_Sağ.Panel1.Controls.Add(this.label1);
             this.P_Sol_Sağ.Panel1.Controls.Add(this.PURE_BARCODE);
             this.P_Sol_Sağ.Panel1.Controls.Add(this.Çıktı);
@@ -448,6 +559,8 @@
             // 
             // P_Sol_Sağ.Panel2
             // 
+            this.P_Sol_Sağ.Panel2.Controls.Add(this.Kamera_Düzeltme_Keskinlik);
+            this.P_Sol_Sağ.Panel2.Controls.Add(this.Kamera_Düzeltme_Parlaklık);
             this.P_Sol_Sağ.Panel2.Controls.Add(this.ResimSayacı);
             this.P_Sol_Sağ.Panel2.Controls.Add(this.P6);
             this.P_Sol_Sağ.Panel2.Controls.Add(this.P3);
@@ -475,22 +588,6 @@
             this.Kaydet.Text = "Kaydet";
             this.Kaydet.UseVisualStyleBackColor = true;
             this.Kaydet.Click += new System.EventHandler(this.Kaydet_Click);
-            // 
-            // KameraNo
-            // 
-            this.KameraNo.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.KameraNo.Location = new System.Drawing.Point(302, 12);
-            this.KameraNo.Maximum = new decimal(new int[] {
-            65535,
-            0,
-            0,
-            0});
-            this.KameraNo.Name = "KameraNo";
-            this.KameraNo.Size = new System.Drawing.Size(321, 22);
-            this.KameraNo.TabIndex = 36;
-            this.KameraNo.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-            this.KameraNo.ValueChanged += new System.EventHandler(this.KameraNo_ValueChanged);
             // 
             // ResimSayacı
             // 
@@ -708,9 +805,7 @@
             // 
             // İşçi
             // 
-            this.İşçi.WorkerReportsProgress = true;
             this.İşçi.DoWork += new System.ComponentModel.DoWorkEventHandler(this.İşçi_DoWork);
-            this.İşçi.ProgressChanged += new System.ComponentModel.ProgressChangedEventHandler(this.İşçi_ProgressChanged);
             // 
             // AnaEkran
             // 
@@ -731,6 +826,11 @@
             this.DragDrop += new System.Windows.Forms.DragEventHandler(this.AnaEkran_DragDrop);
             this.DragEnter += new System.Windows.Forms.DragEventHandler(this.AnaEkran_DragEnter);
             this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.AnaEkran_KeyDown);
+            ((System.ComponentModel.ISupportInitialize)(this.Kamera_No)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.Kamera_Çözünürlük_Yatay)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.Kamera_Çözünürlük_Dikey)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.Kamera_Düzeltme_Parlaklık)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.Kamera_Düzeltme_Keskinlik)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.Girdi)).EndInit();
             this.P_Sol_Sağ.Panel1.ResumeLayout(false);
             this.P_Sol_Sağ.Panel1.PerformLayout();
@@ -738,7 +838,6 @@
             this.P_Sol_Sağ.Panel2.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.P_Sol_Sağ)).EndInit();
             this.P_Sol_Sağ.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.KameraNo)).EndInit();
             this.P6.ResumeLayout(false);
             this.P6.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.P6_Resim)).EndInit();
@@ -785,7 +884,7 @@
         private System.Windows.Forms.PictureBox Girdi;
         private System.Windows.Forms.TextBox Çıktı;
         private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.NumericUpDown KameraNo;
+        private System.Windows.Forms.NumericUpDown Kamera_No;
         private System.Windows.Forms.Button Kaydet;
         private System.Windows.Forms.Button Tuş_Çıkış;
         private System.Windows.Forms.Button Tuş_BunuKullan;
@@ -810,6 +909,10 @@
         private System.Windows.Forms.Panel P1;
         private System.ComponentModel.BackgroundWorker İşçi;
         private System.Windows.Forms.Label ResimSayacı;
+        private System.Windows.Forms.NumericUpDown Kamera_Çözünürlük_Dikey;
+        private System.Windows.Forms.NumericUpDown Kamera_Çözünürlük_Yatay;
+        private System.Windows.Forms.NumericUpDown Kamera_Düzeltme_Keskinlik;
+        private System.Windows.Forms.NumericUpDown Kamera_Düzeltme_Parlaklık;
     }
 }
 

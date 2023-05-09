@@ -11,7 +11,6 @@ namespace Barkod_Oku
     public partial class AnaEkran : Form
     {
         bool İlkAçılışİşlemleriTamamlandı = false, GeçiciOlarakDurdur = false;
-        long KuyruktakiResimSayısı = 0;
         int Sayac_Panel = 0, Sayac_Resim = 0;
 
         #region Resim Tutucular
@@ -63,7 +62,11 @@ namespace Barkod_Oku
                 Tür.Items.AddRange(string.Join("?", Enum.GetNames(typeof(ZXing.BarcodeFormat))).Split('?'));
 
                 IDepo_Eleman Detaylar = Ortak.Depo_Ayarlar["Detaylar"];
-                KameraNo.Value = Detaylar.Oku_TamSayı("Kamera No");
+                Kamera_No.Value = Detaylar.Oku_TamSayı("Kamera", 0, 0);
+                Kamera_Çözünürlük_Yatay.Value = Detaylar.Oku_TamSayı("Kamera", 640, 1);
+                Kamera_Çözünürlük_Dikey.Value = Detaylar.Oku_TamSayı("Kamera", 480, 2);
+                Kamera_Düzeltme_Parlaklık.Value = (decimal)Detaylar.Oku_Sayı("Kamera", 0, 3);
+                Kamera_Düzeltme_Keskinlik.Value = (decimal)Detaylar.Oku_Sayı("Kamera", 0, 4);
                 KarakterKodlama.Text = Detaylar.Oku("Karakter Kodlama", "ASCII");
                 if (Detaylar["Tür", 0] == "Tümü") Tür.SetItemChecked(0, true);
                 else
@@ -111,7 +114,7 @@ namespace Barkod_Oku
         }
         private void AnaEkran_Shown(object sender, EventArgs e)
         {
-            KameraNo_ValueChanged(null, null);
+            Ayar_Değişti(null, null);
 
             Kaydet.Enabled = false;
 
@@ -183,45 +186,52 @@ namespace Barkod_Oku
 
             while (Ortak.Çalışsın)
             {
-                if (!GeçiciOlarakDurdur && Interlocked.Read(ref KuyruktakiResimSayısı) == 0)
+                if (!GeçiciOlarakDurdur)
                 {
-                    Bitmap rsm = Kamera.ResimAl();
-                    if (rsm == null)
+                    try
                     {
-                        if (!Kamera.ÇalışıyorMu())
+                        Bitmap rsm = Kamera.ResimAl();
+                        if (rsm == null)
                         {
-                            if (Ortak.NormalÇalışma)
+                            if (!Kamera.ÇalışıyorMu())
                             {
-                                Depo_Çalıştır_İçineKaydet_Kapan(true, "Kamera açılamadı.");
-                                break;
-                            }
-                            else
-                            {
-                                Hata_Göster("Kamera açılamadı.");
-                                Thread.Sleep(1000);
-                                continue;
+                                if (Ortak.NormalÇalışma)
+                                {
+                                    Depo_Çalıştır_İçineKaydet_Kapan(true, "Kamera açılamadı.");
+                                    break;
+                                }
+                                else
+                                {
+                                    Hata_Göster("Kamera açılamadı.");
+                                    Thread.Sleep(1000);
+                                    continue;
+                                }
                             }
                         }
-                    }
-                    else
-                    {
-                        if (BarkodOku_1_ResimÇek_0)
+                        else
                         {
-                            try
+                            if (BarkodOku_1_ResimÇek_0)
                             {
                                 if (Ortak.Barkod.Oku(rsm))
                                 {
                                     Depo_Çalıştır_İçineKaydet_Kapan(false, null);
                                 }
                             }
-                            catch (Exception ex)
-                            {
-                                Depo_Çalıştır_İçineKaydet_Kapan(true, ex.ToString());
-                            }
-                        }
 
-                        Interlocked.Increment(ref KuyruktakiResimSayısı);
-                        İşçi.ReportProgress(0, rsm);
+                            Girdi.Invoke(new Action(() =>
+                            {
+                                Girdi.Image?.Dispose();
+                                Girdi.Image = rsm;
+
+                                ResimSayacı.Text = Sayac_Resim++.ToString();
+
+                                Kamera.Düzeltme_Güncelle(Kamera_Düzeltme_Parlaklık.Value, Kamera_Düzeltme_Keskinlik.Value);
+                            }));
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Depo_Çalıştır_İçineKaydet_Kapan(true, ex.ToString());
                     }
                 }
 
@@ -229,21 +239,6 @@ namespace Barkod_Oku
             }
 
             Kamera.Durdur();
-        }
-        private void İşçi_ProgressChanged(object sender, System.ComponentModel.ProgressChangedEventArgs e)
-        {
-            Bitmap rsm = (Bitmap)e.UserState;
-           
-            if (GeçiciOlarakDurdur) rsm?.Dispose();
-            else
-            {
-                Girdi.Image?.Dispose();
-                Girdi.Image = rsm;
-
-                ResimSayacı.Text = Sayac_Resim++.ToString();
-            }
-
-            Interlocked.Exchange(ref KuyruktakiResimSayısı, 0);
         }
 
         void Depo_Çalıştır_İçineKaydet_Kapan(bool Hatalı, string HataAçıklaması)
@@ -321,9 +316,9 @@ namespace Barkod_Oku
         {
             Girdi.SizeMode = Sığdır.Checked ? PictureBoxSizeMode.Zoom : PictureBoxSizeMode.Normal;
         }
-        private void KameraNo_ValueChanged(object sender, EventArgs e)
+        private void Kamera_Leave(object sender, EventArgs e)
         {
-            Kamera.Durdur();
+            MessageBox.Show("Kamera ayarlarının uygulanabilmesi için kaydedip," + Environment.NewLine + "uygulamayı tekrar başlatınız.", Text);
 
             if (!Ortak.NormalÇalışma) Ayar_Değişti(null, null);
         }
@@ -332,7 +327,11 @@ namespace Barkod_Oku
             if (!İlkAçılışİşlemleriTamamlandı) return;
 
             IDepo_Eleman Detaylar = Ortak.Depo_Ayarlar["Detaylar"];
-            Detaylar.Yaz("Kamera No", (int)KameraNo.Value);
+            Detaylar.Yaz("Kamera", (int)Kamera_No.Value, 0);
+            Detaylar.Yaz("Kamera", (int)Kamera_Çözünürlük_Yatay.Value, 1);
+            Detaylar.Yaz("Kamera", (int)Kamera_Çözünürlük_Dikey.Value, 2);
+            Detaylar.Yaz("Kamera", (double)Kamera_Düzeltme_Parlaklık.Value, 3);
+            Detaylar.Yaz("Kamera", (double)Kamera_Düzeltme_Keskinlik.Value, 4);
             Detaylar.Yaz("Karakter Kodlama", KarakterKodlama.Text);
             if (Tür.GetItemChecked(0)) Detaylar["Tür"].İçeriği = new string[] { "Tümü" };
             else
@@ -458,6 +457,7 @@ namespace Barkod_Oku
 
             MessageBox.Show("Tüm resim tutucular dolu olduğu için işlem tamamlanamadı.", Text);
         }
+
         private void P_Resim_MouseClick(object sender, MouseEventArgs e)
         {
             Girdi.Image?.Dispose();

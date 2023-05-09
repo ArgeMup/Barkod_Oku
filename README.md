@@ -36,7 +36,7 @@ Many thanks to the team of the [zxing project](https://github.com/zxing/zxing) f
         
     Ayarlar Depo Dosyası İçeriği
         Detaylar
-            Kamera No / Tamsayı
+            Kamera / No / Çözünürlük Yatay /  Çözünürlük Dikey / Parlaklık / Keskinlik
             Karakter Kodlama / ASCII veya UTF-8
             Tür / Tümü veya <BarcodeFormat> / <BarcodeFormat> / ...
             AutoRotate / bit
