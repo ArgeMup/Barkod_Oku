@@ -158,7 +158,6 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\EkDosyalar.zip" />
     <None Include="Resources\sag.png" />
   </ItemGroup>
   <ItemGroup>

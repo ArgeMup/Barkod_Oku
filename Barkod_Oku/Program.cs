@@ -48,10 +48,7 @@ namespace Barkod_Oku
                     Dosya.Sil(Kendi.Klasörü + "\\OpenCvSharp.Extensions.dll");
                     Dosya.Sil(Kendi.Klasörü + "\\System.Drawing.Common.dll");
 
-                    YeniYazılımKontrolü_ YeniYazılımKontrolü = new YeniYazılımKontrolü_();
-                    YeniYazılımKontrolü.Başlat(new System.Uri("https://github.com/ArgeMup/Barkod_Oku/blob/main/Barkod_Oku/bin/Release/Barkod_Oku.exe?raw=true"));
-                    while (!YeniYazılımKontrolü.KontrolTamamlandı) System.Threading.Thread.Sleep(1000);
-                    YeniYazılımKontrolü.Durdur();
+                    _Dosyayı_İndir_("https://github.com/ArgeMup/Barkod_Oku/blob/main/Barkod_Oku/bin/Release/Barkod_Oku.exe?raw=true", Kendi.DosyaYolu);
                     return;
                 }
                 else if (File.Exists(BaşlangıçParamaetreleri[0]))
@@ -62,8 +59,21 @@ namespace Barkod_Oku
             }
 
             //Ek dosyaların çıkarılması
-            if (!File.Exists(Kendi.Klasörü + "\\EkDosyalar.zip")) File.WriteAllBytes(Kendi.Klasörü + "\\EkDosyalar.zip", Properties.Resources.EkDosyalar);
-            if (!Directory.Exists(Kendi.Klasörü + "\\dll")) SıkıştırılmışDosya.Klasöre(Kendi.Klasörü + "\\EkDosyalar.zip", Kendi.Klasörü);
+            if (!File.Exists(Kendi.Klasörü + "\\zxing.dll"))
+            {
+                if (!File.Exists(Kendi.Klasörü + "\\dll.zip") && !_Dosyayı_İndir_("https://github.com/ArgeMup/Barkod_Oku/blob/main/Barkod_Oku/bin/Release/dll.zip?raw=true", Kendi.Klasörü + "\\dll.zip")) return;
+                SıkıştırılmışDosya.Klasöre(Kendi.Klasörü + "\\dll.zip", Kendi.Klasörü);
+            }
+            if (!Directory.Exists(Kendi.Klasörü + "\\dll\\x86"))
+            {
+                if (!File.Exists(Kendi.Klasörü + "\\dll_x86.zip") && !_Dosyayı_İndir_("https://github.com/ArgeMup/Barkod_Oku/blob/main/Barkod_Oku/bin/Release/dll_x86.zip?raw=true", Kendi.Klasörü + "\\dll_x86.zip")) return;
+                SıkıştırılmışDosya.Klasöre(Kendi.Klasörü + "\\dll_x86.zip", Kendi.Klasörü);
+            }
+            if (!Directory.Exists(Kendi.Klasörü + "\\dll\\x64"))
+            {
+                if (!File.Exists(Kendi.Klasörü + "\\dll_x64.zip") && !_Dosyayı_İndir_("https://github.com/ArgeMup/Barkod_Oku/blob/main/Barkod_Oku/bin/Release/dll_x64.zip?raw=true", Kendi.Klasörü + "\\dll_x64.zip")) return;
+                SıkıştırılmışDosya.Klasöre(Kendi.Klasörü + "\\dll_x64.zip", Kendi.Klasörü);
+            }
 
             if (Ortak.Depo_Komut == null)
             {
@@ -80,6 +90,18 @@ namespace Barkod_Oku
             System.Windows.Forms.Application.EnableVisualStyles();
             System.Windows.Forms.Application.SetCompatibleTextRenderingDefault(false);
             System.Windows.Forms.Application.Run(new AnaEkran());
+
+            bool _Dosyayı_İndir_(string Kaynak_Uri, string HedefDosyaYolu)
+            {
+                YeniYazılımKontrolü_ YeniYazılımKontrolü = new YeniYazılımKontrolü_();
+                YeniYazılımKontrolü.Başlat(new Uri(Kaynak_Uri), HedefDosyaYolu:HedefDosyaYolu);
+                while (!YeniYazılımKontrolü.KontrolTamamlandı) System.Threading.Thread.Sleep(1000);
+                YeniYazılımKontrolü.Durdur();
+                bool sonuç = File.Exists(HedefDosyaYolu);
+
+                if (!sonuç) File.WriteAllText("Hata.txt", "Dosya indirilemedi" + Environment.NewLine + HedefDosyaYolu + Environment.NewLine + Kaynak_Uri);
+                return sonuç;
+            }
         }
     }
 }
