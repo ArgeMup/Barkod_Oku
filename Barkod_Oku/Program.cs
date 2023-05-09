@@ -42,7 +42,9 @@ namespace Barkod_Oku
                 if (BaşlangıçParamaetreleri[0] == "YeniYazilimKontrolu")
                 {
                     Klasör.Sil(Kendi.Klasörü + "\\dll");
-                    Dosya.Sil(Kendi.Klasörü + "\\EkDosyalar.zip");
+                    Dosya.Sil(Kendi.Klasörü + "\\dll.zip");
+                    Dosya.Sil(Kendi.Klasörü + "\\dll_x86.zip");
+                    Dosya.Sil(Kendi.Klasörü + "\\dll_x64.zip");
                     Dosya.Sil(Kendi.Klasörü + "\\zxing.dll");
                     Dosya.Sil(Kendi.Klasörü + "\\OpenCvSharp.dll");
                     Dosya.Sil(Kendi.Klasörü + "\\OpenCvSharp.Extensions.dll");
