@@ -25,6 +25,10 @@ namespace Barkod_Oku
         {
             InitializeComponent();
 
+            IDepo_Eleman Detaylar = Ortak.Depo_Ayarlar["Detaylar"];
+            Kamera_Düzeltme_Parlaklık.Value = (decimal)Detaylar.Oku_Sayı("Kamera", 0, 3);
+            Kamera_Düzeltme_Keskinlik.Value = (decimal)Detaylar.Oku_Sayı("Kamera", 0, 4);
+
             if (Ortak.NormalÇalışma)
             {
                 P_Sol_Sağ.Panel1Collapsed = true;
@@ -61,12 +65,9 @@ namespace Barkod_Oku
                 KarakterKodlama.SelectedIndex = 0;
                 Tür.Items.AddRange(string.Join("?", Enum.GetNames(typeof(ZXing.BarcodeFormat))).Split('?'));
 
-                IDepo_Eleman Detaylar = Ortak.Depo_Ayarlar["Detaylar"];
                 Kamera_No.Value = Detaylar.Oku_TamSayı("Kamera", 0, 0);
                 Kamera_Çözünürlük_Yatay.Value = Detaylar.Oku_TamSayı("Kamera", 640, 1);
                 Kamera_Çözünürlük_Dikey.Value = Detaylar.Oku_TamSayı("Kamera", 480, 2);
-                Kamera_Düzeltme_Parlaklık.Value = (decimal)Detaylar.Oku_Sayı("Kamera", 0, 3);
-                Kamera_Düzeltme_Keskinlik.Value = (decimal)Detaylar.Oku_Sayı("Kamera", 0, 4);
                 KarakterKodlama.Text = Detaylar.Oku("Karakter Kodlama", "ASCII");
                 if (Detaylar["Tür", 0] == "Tümü") Tür.SetItemChecked(0, true);
                 else
@@ -120,52 +121,11 @@ namespace Barkod_Oku
 
             İşçi.RunWorkerAsync();
         }
-        private void AnaEkran_KeyDown(object sender, KeyEventArgs e)
-        {
-            switch (e.KeyCode)
-            {
-                case Keys.Escape:
-                    Close();
-                    break;
-
-                case Keys.F1:
-                    Tuş_TekrarYakala_Click(null, null);
-                    break;
-
-                case Keys.F2:
-                    Tuş_BunuKullan_Click(null, null);   
-                    break;
-
-                default:
-                    if (e.KeyCode >= Keys.D1 && e.KeyCode <= Keys.D9)
-                    {
-                        int tuş = e.KeyCode - Keys.D1;
-
-                        if (tuş < 0 || 
-                            tuş >= ResimTutucu_Adet ||
-                            !ResimTutucu_P[tuş].Visible) return;
-
-                        ResimTutucu_Kullan[tuş].Checked = !ResimTutucu_Kullan[tuş].Checked;
-                    }
-                    else if (e.KeyCode >= Keys.NumPad0 && e.KeyCode <= Keys.NumPad9)
-                    {
-                        int tuş = e.KeyCode - Keys.NumPad0;
-
-                        if (tuş < 0 ||
-                            tuş > ResimTutucu_Adet) return;
-
-                        PictureBox rsm;
-                        if (tuş == 0) rsm = Girdi;
-                        else rsm = ResimTutucu_Resim[tuş - 1];
-                        P_Resim_MouseClick(rsm, null);
-                    }
-                    break;
-            }
-        }
         private void İşçi_DoWork(object sender, System.ComponentModel.DoWorkEventArgs e)
         {
             int TaramaGecikmesi = 1000 / 30 /*msn olarak - sn deki kare sayısına göre*/;
             bool BarkodOku_1_ResimÇek_0 = true; //ayarla aşamasında barkod okuyabilmesi için
+            int ZamanAşımı = 0; //Uygulamanın kapanması için zamanlayıcı
 
             if (Ortak.NormalÇalışma)
             {
@@ -182,6 +142,9 @@ namespace Barkod_Oku
                     Depo_Çalıştır_İçineKaydet_Kapan(true, "Hatalı Komut");
                     return;
                 }
+
+                ZamanAşımı = Ortak.Depo_Komut["Zaman Aşımı"].Oku_TamSayı(null);
+                if (ZamanAşımı > 0) ZamanAşımı = Environment.TickCount + (ZamanAşımı * 1000);
             }
 
             while (Ortak.Çalışsın)
@@ -220,12 +183,15 @@ namespace Barkod_Oku
 
                             Girdi.Invoke(new Action(() =>
                             {
-                                Girdi.Image?.Dispose();
-                                Girdi.Image = rsm;
+                                if (!GeçiciOlarakDurdur)
+                                {
+                                    Girdi.Image?.Dispose();
+                                    Girdi.Image = rsm;
 
-                                ResimSayacı.Text = Sayac_Resim++.ToString();
+                                    ResimSayacı.Text = Sayac_Resim++.ToString();
 
-                                Kamera.Düzeltme_Güncelle(Kamera_Düzeltme_Parlaklık.Value, Kamera_Düzeltme_Keskinlik.Value);
+                                    Kamera.Düzeltme_Güncelle(Kamera_Düzeltme_Parlaklık.Value, Kamera_Düzeltme_Keskinlik.Value);
+                                }
                             }));
                         }
                     }
@@ -234,6 +200,8 @@ namespace Barkod_Oku
                         Depo_Çalıştır_İçineKaydet_Kapan(true, ex.ToString());
                     }
                 }
+
+                if (ZamanAşımı > 0 && ZamanAşımı <= Environment.TickCount) Depo_Çalıştır_İçineKaydet_Kapan(true, "Zaman Aşımı");
 
                 Thread.Sleep(TaramaGecikmesi);
             }
@@ -324,7 +292,7 @@ namespace Barkod_Oku
         }
         private void Ayar_Değişti(object sender, EventArgs e)
         {
-            if (!İlkAçılışİşlemleriTamamlandı) return;
+            if (!İlkAçılışİşlemleriTamamlandı || Ortak.NormalÇalışma) return;
 
             IDepo_Eleman Detaylar = Ortak.Depo_Ayarlar["Detaylar"];
             Detaylar.Yaz("Kamera", (int)Kamera_No.Value, 0);
@@ -388,6 +356,50 @@ namespace Barkod_Oku
         #endregion
 
         #region Normal Resim Çekme
+        private void AnaEkran_KeyDown(object sender, KeyEventArgs e)
+        {
+            switch (e.KeyCode)
+            {
+                case Keys.Escape:
+                    Close();
+                    break;
+
+                case Keys.F1:
+                    Tuş_TekrarYakala_Click(null, null);
+                    break;
+
+                case Keys.F2:
+                    Tuş_BunuKullan_Click(null, null);
+                    break;
+
+                default:
+                    if (e.KeyCode >= Keys.D1 && e.KeyCode <= Keys.D9)
+                    {
+                        int tuş = e.KeyCode - Keys.D1;
+
+                        if (tuş < 0 ||
+                            tuş >= ResimTutucu_Adet ||
+                            !ResimTutucu_P[tuş].Visible) return;
+
+                        ResimTutucu_Kullan[tuş].Checked = !ResimTutucu_Kullan[tuş].Checked;
+                    }
+                    else if (e.KeyCode >= Keys.NumPad0 && e.KeyCode <= Keys.NumPad9)
+                    {
+                        int tuş = e.KeyCode - Keys.NumPad0;
+
+                        if (tuş < 0 ||
+                            tuş > ResimTutucu_Adet) return;
+
+                        PictureBox rsm;
+                        if (tuş == 0) rsm = Girdi;
+                        else if (ResimTutucu_P[tuş - 1].Visible) rsm = ResimTutucu_Resim[tuş - 1];
+                        else return;
+
+                        P_Resim_MouseClick(rsm, null);
+                    }
+                    break;
+            }
+        }
         private void Tuş_BunuKullan_Click(object sender, EventArgs e)
         {
             DateTime şimdi = DateTime.Now;

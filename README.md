@@ -16,6 +16,7 @@ Many thanks to the team of the [zxing project](https://github.com/zxing/zxing) f
         Komut / Ayarla VEYA
         Komut / Barkod Oku veya Resim Çek / Başarılı veya Hatalı / Açıklaması
         Ayarlar / <Ayarlar Depo Dosya Yolu>
+        Zaman Aşımı / <sn - 0 dan büyük ise - Süre dolduğunda kapanır>
         Resimler / <Okuma Tarihi>
             <Resim No> / <Dosya Yolu>
         Barkodlar / <Okuma Tarihi>

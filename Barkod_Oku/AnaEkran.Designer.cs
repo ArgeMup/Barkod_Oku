@@ -429,6 +429,7 @@
             this.Kamera_Düzeltme_Parlaklık.TabStop = false;
             this.Kamera_Düzeltme_Parlaklık.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             this.İpUcu.SetToolTip(this.Kamera_Düzeltme_Parlaklık, "Parlaklık");
+            this.Kamera_Düzeltme_Parlaklık.ValueChanged += new System.EventHandler(this.Ayar_Değişti);
             // 
             // Kamera_Düzeltme_Keskinlik
             // 
@@ -451,6 +452,7 @@
             this.Kamera_Düzeltme_Keskinlik.TabStop = false;
             this.Kamera_Düzeltme_Keskinlik.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             this.İpUcu.SetToolTip(this.Kamera_Düzeltme_Keskinlik, "Keskinlik");
+            this.Kamera_Düzeltme_Keskinlik.ValueChanged += new System.EventHandler(this.Ayar_Değişti);
             // 
             // Girdi
             // 
