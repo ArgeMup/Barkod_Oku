@@ -45,6 +45,8 @@ namespace Barkod_Oku
                 }
                 else if (Ortak.Depo_Komut["Komut", 0] == "Resim Çek")
                 {
+                    Klasör.Sil(Kendi.Klasörü + "\\Resimler");
+
                     Girdi.MouseClick += new MouseEventHandler(P_Resim_MouseClick);
 
                     İpUcu.SetToolTip(Girdi,
@@ -215,14 +217,14 @@ namespace Barkod_Oku
             Ortak.Depo_Komut["Komut", 2] = HataAçıklaması;
 
             string içerik = Ortak.Depo_Komut.YazıyaDönüştür();
-            if (Ortak.NormalÇalışma) File.WriteAllText(Ortak.Depo_Komut_DosyaYolu, içerik);
-            else Hata_Göster(içerik);
+            File.WriteAllText(Ortak.Depo_Komut_DosyaYolu, içerik);
 
             if (Ortak.NormalÇalışma)
             {
                 Ortak.Çalışsın = false; //tamamlandı, kapan
                 Close();
             }
+            else Hata_Göster(içerik);
         }
         void Hata_Göster(string Mesaj)
         {
@@ -403,8 +405,9 @@ namespace Barkod_Oku
         private void Tuş_BunuKullan_Click(object sender, EventArgs e)
         {
             DateTime şimdi = DateTime.Now;
-            string kls = Kendi.Klasörü + "\\Resimler\\";
-            Klasör.Sil(kls);
+            string kls = Ortak.Depo_Komut["Komut"].Oku("Kayıt", Kendi.Klasörü + "\\Resimler", 1) + "\\";
+            string Türü_yazı = Ortak.Depo_Komut["Komut/Kayıt", 0] == "png" ? ".png" : Ortak.Depo_Komut["Komut/Kayıt", 0] == "bmp" ? ".bmp" : ".jpg";
+            System.Drawing.Imaging.ImageFormat Türü = Türü_yazı == ".png" ? System.Drawing.Imaging.ImageFormat.Png : Türü_yazı == ".bmp" ? System.Drawing.Imaging.ImageFormat.Bmp : System.Drawing.Imaging.ImageFormat.Jpeg;
             Klasör.Oluştur(kls);
 
             Ortak.Depo_Komut.Sil("Resimler", false, true);
@@ -414,8 +417,8 @@ namespace Barkod_Oku
             {
                 if (ResimTutucu_Kullan[i].Checked)
                 {
-                    string dsy = kls + şimdi.Yazıya(ArgeMup.HazirKod.Dönüştürme.D_TarihSaat.Şablon_DosyaAdı2) + ".png";
-                    ResimTutucu_Resim[i].Image.Save(dsy, System.Drawing.Imaging.ImageFormat.Png);
+                    string dsy = kls + şimdi.Yazıya(ArgeMup.HazirKod.Dönüştürme.D_TarihSaat.Şablon_DosyaAdı2) + Türü_yazı;
+                    ResimTutucu_Resim[i].Image.Save(dsy, Türü);
 
                     Ortak.Depo_Komut["Resimler/" + i, 0] = dsy;
 

@@ -14,7 +14,9 @@ Many thanks to the team of the [zxing project](https://github.com/zxing/zxing) f
 
     Komut Verme Depo Dosyası İçeriği
         Komut / Ayarla VEYA
-        Komut / Barkod Oku veya Resim Çek / Başarılı veya Hatalı / Açıklaması
+        Komut / Barkod Oku VEYA / Başarılı veya Hatalı / Açıklaması
+        Komut / Resim Çek / Başarılı veya Hatalı / Açıklaması
+            Kayıt / <jpg|bmp|png> / <Klasörü>
         Ayarlar / <Ayarlar Depo Dosya Yolu>
         Zaman Aşımı / <sn - 0 dan büyük ise - Süre dolduğunda kapanır>
         Resimler / <Okuma Tarihi>
