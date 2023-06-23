@@ -97,6 +97,9 @@ namespace Barkod_Oku
                 ALSO_INVERTED.Checked = Detaylar.Oku_Bit("ALSO_INVERTED", false);
 
                 Girdi.MouseClick += new MouseEventHandler(P_Resim_MouseClick);
+
+                FormBorderStyle = FormBorderStyle.Sizable;
+                ControlBox = true;
             }
 
             #if !DEBUG
@@ -265,6 +268,7 @@ namespace Barkod_Oku
                     bool Kaydet_enabled = Kaydet.Enabled;
                     Ayar_Değişti(null, null);
                     Kaydet.Enabled = Kaydet_enabled;
+                    GeçiciOlarakDurdur = true; //kamerayı sustur
                 }
             }
         }
